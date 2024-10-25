@@ -1,0 +1,8 @@
+{
+  "lowerBound": 5,
+  "upperBound": 10,
+  "Proportions": [
+    [33, 67],
+    [17, 17, 17, 50]
+  ]
+}
