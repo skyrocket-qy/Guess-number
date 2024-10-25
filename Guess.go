@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"math"
-
-	"github.com/mohae/deepcopy"
 )
 
 func GuessNumbers(
@@ -12,27 +10,40 @@ func GuessNumbers(
 	upperBound int,
 	proportions [][]int,
 ) ([]int, error) {
-	var possibleResult [][]int
+	var proportionPossibleResults [][]int
 	for _, proportion := range proportions {
-		if !checkproportion(proportion) {
+		if !isValidProportion(proportion) {
 			return nil, fmt.Errorf("invalid proportion: %v", proportion)
 		}
 
-		possibleResult = append(
-			possibleResult,
+		proportionPossibleResults = append(
+			proportionPossibleResults,
 			findPossibleResults(lowerBound, upperBound, proportion),
 		)
 	}
 
-	return Intersect(possibleResult), nil
+	return intersectResults(proportionPossibleResults), nil
 }
 
-func checkproportion(proportion []int) bool {
+func isValidProportion(proportion []int) bool {
 	sum := 0
 	for _, v := range proportion {
 		sum += v
 	}
-	return sum >= 98 && sum <= 102
+	return sum >= 99 && sum <= 101
+}
+
+func HasCompositionOfN(n int, propMap map[int]int) bool {
+	// We only need to check whether each v is near round(v)
+	for prob := range propMap {
+		v := float64(prob) * float64(n) / 100
+		roundV := math.Round(v)
+		if math.Abs(v-roundV) > 0.1 {
+			return false
+		}
+	}
+
+	return true
 }
 
 func findPossibleResults(lowerBound int, upperBound int, proportion []int) []int {
@@ -46,39 +57,14 @@ func findPossibleResults(lowerBound int, upperBound int, proportion []int) []int
 
 	var possibleResults []int
 	for n := lowerBound; n <= upperBound; n++ {
-		composition := []int{}
-		copyPropMap := deepcopy.Copy(propMap).(map[int]int)
-		curMembers := 0
-		for curMembers < n {
-			find := false
-			for i := 0; i < n; i++ {
-				p := int(math.Round(float64(i*100) / float64(n)))
-				if _, ok := copyPropMap[p]; ok {
-					copyPropMap[p]--
-					if v := copyPropMap[p]; v == 0 {
-						delete(copyPropMap, p)
-					}
-					composition = append(composition, i)
-					find = true
-					break
-				}
-			}
-			if !find {
-				break
-			}
-		}
-		sum := 0
-		for _, v := range composition {
-			sum += v
-		}
-		if sum == n {
+		if HasCompositionOfN(n, propMap) {
 			possibleResults = append(possibleResults, n)
 		}
 	}
 	return possibleResults
 }
 
-func Intersect(proportionPossibleResults [][]int) []int {
+func intersectResults(proportionPossibleResults [][]int) []int {
 	if len(proportionPossibleResults) == 0 {
 		return nil
 	}
@@ -92,12 +78,12 @@ func Intersect(proportionPossibleResults [][]int) []int {
 	}
 
 	// Find possible result that match all proportions
-	var res []int
+	var intersection []int
 	for k, c := range countMap {
 		if c == len(proportionPossibleResults) {
-			res = append(res, k)
+			intersection = append(intersection, k)
 		}
 	}
 
-	return res
+	return intersection
 }
