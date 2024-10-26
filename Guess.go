@@ -5,10 +5,11 @@ import (
 	"math"
 )
 
+// TODO: Currently is for each proportion to find n, but we can for each n to find proportion, if any proportion not fit than pass
 func GuessNumbers(
 	lowerBound int,
 	upperBound int,
-	proportions [][]int,
+	proportions [][]float64,
 ) ([]int, error) {
 	var proportionPossibleResults [][]int
 	for _, proportion := range proportions {
@@ -25,15 +26,15 @@ func GuessNumbers(
 	return intersectResults(proportionPossibleResults), nil
 }
 
-func isValidProportion(proportion []int) bool {
-	sum := 0
+func isValidProportion(proportion []float64) bool {
+	var sum float64
 	for _, v := range proportion {
 		sum += v
 	}
 	return sum >= 99 && sum <= 101
 }
 
-func HasCompositionOfN(n int, propMap map[int]int) bool {
+func HasCompositionOfN(n int, propMap map[float64]int) bool {
 	// We only need to check whether each v is near round(v)
 	for prob := range propMap {
 		v := float64(prob) * float64(n) / 100
@@ -46,8 +47,8 @@ func HasCompositionOfN(n int, propMap map[int]int) bool {
 	return true
 }
 
-func findPossibleResults(lowerBound int, upperBound int, proportion []int) []int {
-	propMap := make(map[int]int, len(proportion))
+func findPossibleResults(lowerBound int, upperBound int, proportion []float64) []int {
+	propMap := make(map[float64]int, len(proportion))
 	for _, v := range proportion {
 		if _, ok := propMap[v]; !ok {
 			propMap[v] = 0

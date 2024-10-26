@@ -7,9 +7,9 @@ import (
 )
 
 type Input struct {
-	LowerBound  int     `json:"lowerBound"`
-	UpperBound  int     `json:"upperBound"`
-	Proportions [][]int `json:"proportions"`
+	LowerBound  int         `json:"lowerBound"`
+	UpperBound  int         `json:"upperBound"`
+	Proportions [][]float64 `json:"proportions"`
 }
 
 func main() {
