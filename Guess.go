@@ -5,25 +5,50 @@ import (
 	"math"
 )
 
-// TODO: Currently is for each proportion to find n, but we can for each n to find proportion, if any proportion not fit than pass
-func GuessNumbers(
-	lowerBound int,
-	upperBound int,
-	proportions [][]float64,
-) ([]int, error) {
-	var proportionPossibleResults [][]int
-	for _, proportion := range proportions {
-		if !isValidProportion(proportion) {
-			return nil, fmt.Errorf("invalid proportion: %v", proportion)
-		}
-
-		proportionPossibleResults = append(
-			proportionPossibleResults,
-			findPossibleResults(lowerBound, upperBound, proportion),
+func GuessNumbers(lowerBound, upperBound int, proportions [][]float64) ([]int, error) {
+	if lowerBound > upperBound {
+		return nil, fmt.Errorf(
+			"invalid bounds: lowerBound (%d) > upperBound (%d)",
+			lowerBound,
+			upperBound,
 		)
 	}
 
-	return intersectResults(proportionPossibleResults), nil
+	propMaps := make([]map[float64]int, len(proportions))
+	for i, proportion := range proportions {
+		if !isValidProportion(proportion) {
+			return nil, fmt.Errorf("invalid proportion: %v", proportion)
+		}
+		propMaps[i] = newProportionMap(proportion)
+	}
+
+	var possibleResults []int
+	for n := lowerBound; n <= upperBound; n++ {
+		if meetsAllProportions(n, propMaps) {
+			possibleResults = append(possibleResults, n)
+		}
+	}
+
+	return possibleResults, nil
+}
+
+// Helper to create a map from a proportion slice
+func newProportionMap(proportion []float64) map[float64]int {
+	propMap := make(map[float64]int)
+	for _, v := range proportion {
+		propMap[v]++
+	}
+	return propMap
+}
+
+// Helper to check if a number satisfies all proportion maps
+func meetsAllProportions(n int, propMaps []map[float64]int) bool {
+	for _, propMap := range propMaps {
+		if !HasCompositionOfN(n, propMap) {
+			return false
+		}
+	}
+	return true
 }
 
 func isValidProportion(proportion []float64) bool {
@@ -45,46 +70,4 @@ func HasCompositionOfN(n int, propMap map[float64]int) bool {
 	}
 
 	return true
-}
-
-func findPossibleResults(lowerBound int, upperBound int, proportion []float64) []int {
-	propMap := make(map[float64]int, len(proportion))
-	for _, v := range proportion {
-		if _, ok := propMap[v]; !ok {
-			propMap[v] = 0
-		}
-		propMap[v]++
-	}
-
-	var possibleResults []int
-	for n := lowerBound; n <= upperBound; n++ {
-		if HasCompositionOfN(n, propMap) {
-			possibleResults = append(possibleResults, n)
-		}
-	}
-	return possibleResults
-}
-
-func intersectResults(proportionPossibleResults [][]int) []int {
-	if len(proportionPossibleResults) == 0 {
-		return nil
-	}
-
-	countMap := make(map[int]int)
-
-	for _, possibleResults := range proportionPossibleResults {
-		for _, possibleResult := range possibleResults {
-			countMap[possibleResult]++
-		}
-	}
-
-	// Find possible result that match all proportions
-	var intersection []int
-	for k, c := range countMap {
-		if c == len(proportionPossibleResults) {
-			intersection = append(intersection, k)
-		}
-	}
-
-	return intersection
 }
