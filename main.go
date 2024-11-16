@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+
+	"github.com/skyrocketOoO/Guess-number/usecase"
 )
 
 type Input struct {
@@ -24,7 +26,7 @@ func main() {
 		panic(fmt.Sprintf("Error decoding JSON: %s", err.Error()))
 	}
 
-	answers, err := GuessNumbers(
+	answers, err := usecase.GuessNumbers(
 		input.LowerBound,
 		input.UpperBound,
 		input.Proportions,
