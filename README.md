@@ -14,10 +14,6 @@ And you might also see the distribution of their educational backgrounds:
 
 ![Education Distribution](image-1.png)
 
-And their skills:
-
-![Skill Distribution](image-2.png)
-
 This project helps you take these percentages and the applicant range, and determine the possible number of total applicants.
 
 ## How to Use
@@ -26,11 +22,11 @@ This project helps you take these percentages and the applicant range, and deter
 
     ```json
     {
-      "lowerBound": 6,
-      "upperBound": 10,
+      "lowerBound": 15,
+      "upperBound": 25,
       "proportions": [
         [22, 67, 11],
-        [22, 22, 22, 33, 22]
+        [45, 55]
       ]
     }
     ```
@@ -50,7 +46,7 @@ This project helps you take these percentages and the applicant range, and deter
     The program will print the possible number(s) of applicants. For the example `input.json` above, the output will be:
 
     ```
-    Possible numbers: [9]
+    Possible numbers: [18]
     ```
 
 ## The Logic
@@ -59,19 +55,6 @@ The program works by iterating through each integer number in the range from `lo
 
 A number `n` satisfies a proportion set if, for each percentage `p` in the set, the value `(p/100) * n` is very close to a whole number. This is because the number of people in any category must be an integer.
 
-For example, if we are testing the number `9`:
+### Limitation
 
-*   For the education distribution `[22, 67, 11]`:
-    *   `0.22 * 9 = 1.98` (close to 2)
-    *   `0.67 * 9 = 6.03` (close to 6)
-    *   `0.11 * 9 = 0.99` (close to 1)
-    The sum of the rounded numbers is `2 + 6 + 1 = 9`, which matches the total number of applicants.
-
-*   For the skill distribution `[22, 22, 22, 33, 22]`:
-    *   `0.22 * 9 = 1.98` (close to 2)
-    *   `0.33 * 9 = 2.97` (close to 3)
-    Since all these values are close to whole numbers, `9` is considered a possible number of applicants.
-
-The program is designed to handle two types of proportion data:
-*   **Exclusive proportions:** where the sum of percentages is 100% (or very close to it), like the education distribution. Each item belongs to exactly one category.
-*   **Non-exclusive proportions:** where the sum of percentages can be over 100%, like the skill distribution. An item can belong to multiple categories.
+Please note that this program can only handle **exclusive proportions**, where the sum of the percentages in each set is approximately 100%. It cannot, for example, process data where one person can belong to multiple categories (like a skill distribution where percentages might sum to more than 100%). This is due to a validation check in the code that ensures the integrity of the proportions.

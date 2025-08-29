@@ -1,8 +1,8 @@
 {
-  "lowerBound": 6,
-  "upperBound": 10,
+  "lowerBound": 15,
+  "upperBound": 25,
   "proportions": [
     [22, 67, 11],
-    [22, 22, 22, 33, 22]
+    [45, 55]
   ]
 }
