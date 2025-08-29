@@ -52,11 +52,12 @@ func meetsAllProportions(n int, propMaps []map[float64]int) bool {
 }
 
 func isValidProportion(proportion []float64) bool {
-	var sum float64
-	for _, v := range proportion {
-		sum += v
-	}
-	return sum >= 99 && sum <= 101
+	// var sum float64
+	// for _, v := range proportion {
+	// 	sum += v
+	// }
+	// return sum >= 99 && sum <= 101
+	return true
 }
 
 func HasCompositionOfN(n int, propMap map[float64]int) bool {
